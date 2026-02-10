@@ -17,7 +17,7 @@
 <i class="w-6 h-6 text-green-600"></i></div>
 <h2 class="text-2xl text-gray-900 mb-2">Submitted!</h2>
 <p class="text-gray-600 mb-6">We received your documents successfully.</p>
-<div class="max-w-xl mx-auto text-left bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+<div class="max-w-xl mx-auto text-center bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
 <div class="text-sm font-medium text-gray-800 mb-2">Submitted document types</div>
 <ul id="submittedDocTypes" class="list-disc pl-5 text-sm text-gray-700">
 </ul>
@@ -26,18 +26,24 @@
 Start Over</button> </div>
 </div>
 <div id="mainView">
-<div class="grid lg:grid-cols-3 gap-6 mb-6">
+<div class="grid lg:grid-cols-1 gap-6 mb-6">
 <div class="lg:col-span-1 space-y-6">
 <div id="queueCard" class="hidden bg-white border border-gray-200 rounded-lg p-6">
 <h3 class="text-lg font-semibold text-gray-900 mb-4">Upload Queue</h3>
 <div id="queueList" class="space-y-3"></div>
 </div>
 </div>
-<div class="lg:col-span-2 space-y-6">
+<div class="lg:col-span-2 space-y-6 max-w-2xl mx-auto">
 <div class="bg-white border border-gray-200 rounded-lg p-6">
 <h3 class="text-lg font-semibold text-gray-900 mb-4">Select Document Type</h3>
-<div id="docTypeGrid" class="grid sm:grid-cols-2 gap-3"></div>
-<p id="docTypeHint" class="mt-3 text-sm text-gray-500"></p>
+<div id="docTypeGrid" class="grid sm:grid-cols-2 gap-3">
+	<!-- Static document type buttons (populated client-side in the original app) -->
+	<button type="button" class="doc-type-btn text-left p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50" data-type="W-2">W-2</button>
+	<button type="button" class="doc-type-btn text-left p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50" data-type="Pay Stubs">Pay Stubs</button>
+	<button type="button" class="doc-type-btn text-left p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50" data-type="Bank Statements">Bank Statements</button>
+	<button type="button" class="doc-type-btn text-left p-4 border border-gray-200 rounded-lg bg-white hover:bg-gray-50" data-type="Government ID">Government ID</button>
+</div>
+<p id="docTypeHint" class="mt-3 text-sm text-gray-500">Select a document type to enable uploads.</p>
 </div>
 <div class="bg-white border border-gray-200 rounded-lg p-6">
 <h3 class="text-lg font-semibold text-gray-900 mb-2">Upload Documents</h3>
@@ -55,13 +61,44 @@ Choose Files</button> </div>
 </div>
 </div>
 <div class="bg-white border border-gray-200 rounded-lg p-6">
-<div class="flex flex-col sm:flex-row gap-3 justify-end"><button id="submitBtn" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700" disabled="">
+<div class="flex flex-col sm:flex-row gap-3 justify-center"><button id="submitBtn" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700" disabled="">
 Submit Documents</button> </div>
-<p id="footerHint" class="text-sm text-gray-500 text-right mt-2">Upload at least one document to submit
+<p id="footerHint" class="text-sm text-gray-500 text-center mt-2">Upload at least one document to submit
 </p>
 </div>
 </div>
 </div>
+</div>
 <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+<!-- Minimal client-side interactivity so the select buttons work without the original JS bundle -->
+<script>
+	(function(){
+		const docButtons = document.querySelectorAll('.doc-type-btn');
+		const docTypeHint = document.getElementById('docTypeHint');
+		const chooseBtn = document.getElementById('chooseFilesBtn');
+		const fileInput = document.getElementById('fileInput');
+
+		function clearActive(){
+			docButtons.forEach(b => {
+				b.classList.remove('ring-2','ring-indigo-500','bg-indigo-50');
+			});
+		}
+
+		docButtons.forEach(btn => {
+			btn.addEventListener('click', () => {
+				clearActive();
+				btn.classList.add('ring-2','ring-indigo-500','bg-indigo-50');
+				const t = btn.getAttribute('data-type') || btn.textContent.trim();
+				docTypeHint.textContent = 'Selected: ' + t;
+				if(chooseBtn) chooseBtn.disabled = false;
+			});
+		});
+
+		if(chooseBtn && fileInput){
+			chooseBtn.addEventListener('click', () => fileInput.click());
+		}
+	})();
+</script>
 </body>
 </html>
